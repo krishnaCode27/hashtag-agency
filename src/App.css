@@ -2045,3 +2045,593 @@ select:focus-visible {
     transition-duration: .01ms !important;
   }
 }
+/* ========================================================
+   GROWTH GRAPH & TRUST STRIP ENHANCEMENTS
+   ======================================================== */
+
+/* Graph Card Styling */
+.growth-graph-card {
+  position: absolute;
+  top: -24px;
+  right: -24px;
+  width: 320px;
+  background: rgba(16, 28, 69, 0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(201, 247, 244, 0.22);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+  z-index: 10;
+  animation: floatGraph 6s ease-in-out infinite alternate;
+}
+
+@keyframes floatGraph {
+  0% { transform: translateY(0px) rotate(0deg); }
+  100% { transform: translateY(-8px) rotate(1deg); }
+}
+
+.graph-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.graph-tag {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: #7887D9;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: block;
+}
+
+.graph-header h4 {
+  font-size: 0.88rem;
+  color: #ffffff;
+  margin: 3px 0 0 0;
+  font-weight: 600;
+}
+
+.growth-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(201, 247, 244, 0.15);
+  color: #C9F7F4;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: 1px solid rgba(201, 247, 244, 0.3);
+}
+
+.svg-graph-container {
+  width: 100%;
+  height: 90px;
+  position: relative;
+  margin: 8px 0;
+}
+
+.growth-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.graph-time-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: #7887D9;
+  margin-top: 4px;
+}
+
+.graph-time-labels .active-period {
+  color: #FFBD86;
+  font-weight: 600;
+}
+
+.graph-footer-stats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(120, 135, 217, 0.18);
+  padding-top: 10px;
+  margin-top: 8px;
+}
+
+.graph-footer-stats small {
+  display: block;
+  font-size: 0.65rem;
+  color: #7887D9;
+}
+
+.graph-footer-stats strong {
+  font-size: 0.78rem;
+  color: #ffffff;
+}
+
+.separator-line {
+  width: 1px;
+  height: 22px;
+  background: rgba(120, 135, 217, 0.2);
+}
+
+/* Trust Strip Section */
+.trust-strip {
+  margin-top: 50px;
+  padding: 24px 20px;
+  background: rgba(14, 21, 52, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(120, 135, 217, 0.15);
+  border-radius: 20px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.trust-stat-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.trust-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(120, 135, 217, 0.12);
+  border: 1px solid rgba(201, 247, 244, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #C9F7F4;
+}
+
+.stat-number {
+  display: block;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #ffffff;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.stat-caption {
+  font-size: 0.8rem;
+  color: #7887D9;
+}
+
+/* Live Status Availability Pill */
+.live-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(16, 28, 69, 0.6);
+  border: 1px solid rgba(201, 247, 244, 0.2);
+  border-radius: 999px;
+  font-size: 0.8rem;
+  color: #C9F7F4;
+  margin: 16px 0 20px 0;
+}
+
+.pulse-dot-green {
+  width: 8px;
+  height: 8px;
+  background: #34d399;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #34d399;
+  animation: pulseGreen 2s infinite;
+}
+
+@keyframes pulseGreen {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+/* Trust Subtext in Hero */
+.trust-subtext {
+  display: block;
+  font-size: 0.72rem;
+  color: #7887D9;
+  margin-top: 2px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .growth-graph-card {
+    position: relative;
+    top: 0;
+    right: 0;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .trust-strip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 540px) {
+  .trust-strip {
+    grid-template-columns: 1fr;
+  }
+}
+/* ========================================================
+   SOUND TOGGLE & WORK SECTION (GROWTH GRAPH + TRUST MATRIX)
+   ======================================================== */
+
+/* Sound Toggle Button in Nav */
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sound-toggle-btn {
+  position: relative;
+  background: rgba(120, 135, 217, 0.12);
+  border: 1px solid rgba(201, 247, 244, 0.25);
+  color: #C9F7F4;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sound-toggle-btn:hover {
+  background: rgba(201, 247, 244, 0.22);
+  border-color: #C9F7F4;
+  transform: scale(1.08);
+}
+
+.sound-toggle-tooltip {
+  position: absolute;
+  bottom: -28px;
+  background: #080B1A;
+  border: 1px solid rgba(120, 135, 217, 0.3);
+  color: #ffffff;
+  font-size: 0.65rem;
+  padding: 2px 6px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.2s ease;
+}
+
+.sound-toggle-btn:hover .sound-toggle-tooltip {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Work Section Growth Matrix Grid */
+.work-growth-matrix {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 22px;
+  margin-bottom: 45px;
+}
+
+/* Graph Box */
+.work-graph-box {
+  background: rgba(16, 28, 69, 0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(201, 247, 244, 0.2);
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.work-graph-box:hover {
+  border-color: rgba(201, 247, 244, 0.4);
+  box-shadow: 0 10px 30px rgba(38, 53, 111, 0.3);
+}
+
+.work-graph-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.graph-live-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: #7887D9;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.work-graph-header h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+.graph-gain-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(201, 247, 244, 0.12);
+  border: 1px solid rgba(201, 247, 244, 0.35);
+  color: #C9F7F4;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.work-svg-wrapper {
+  width: 100%;
+  height: 120px;
+  position: relative;
+}
+
+.work-svg-chart {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.work-graph-timeline {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: #7887D9;
+  margin-top: 10px;
+  border-top: 1px solid rgba(120, 135, 217, 0.15);
+  padding-top: 8px;
+}
+
+.work-graph-timeline .peak-tag {
+  color: #FFBD86;
+  font-weight: 700;
+}
+
+/* Trust Badges 2x2 Grid */
+.work-trust-badges {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.trust-card {
+  background: rgba(16, 28, 69, 0.45);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(120, 135, 217, 0.18);
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.trust-card:hover {
+  background: rgba(38, 53, 111, 0.5);
+  border-color: rgba(201, 247, 244, 0.35);
+  transform: translateY(-3px);
+}
+
+.trust-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(120, 135, 217, 0.14);
+  border: 1px solid rgba(201, 247, 244, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #C9F7F4;
+}
+
+.trust-card-info strong {
+  display: block;
+  font-size: 1.25rem;
+  font-family: 'Space Grotesk', sans-serif;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.trust-card-info span {
+  font-size: 0.72rem;
+  color: #7887D9;
+  line-height: 1.3;
+}
+
+/* Responsive Handling */
+@media (max-width: 992px) {
+  .work-growth-matrix {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .work-trust-badges {
+    grid-template-columns: 1fr;
+  }
+  .work-graph-timeline {
+    font-size: 0.6rem;
+  }
+}
+/* ========================================================
+   FUTURISTIC HUD GRAPH & CYBERPUNK STYLING
+   ======================================================== */
+
+.futuristic-hud-box {
+  position: relative;
+  background: radial-gradient(circle at 80% 20%, rgba(38, 53, 111, 0.45) 0%, rgba(8, 11, 26, 0.85) 100%);
+  border: 1px solid rgba(201, 247, 244, 0.28) !important;
+  box-shadow: 0 0 35px rgba(38, 53, 111, 0.45), inset 0 0 25px rgba(201, 247, 244, 0.04);
+  overflow: hidden;
+}
+
+/* Futuristic Corner Sci-Fi Brackets */
+.hud-corner {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+}
+.hud-top-left {
+  top: 6px;
+  left: 6px;
+  border-top: 2px solid #C9F7F4;
+  border-left: 2px solid #C9F7F4;
+}
+.hud-top-right {
+  top: 6px;
+  right: 6px;
+  border-top: 2px solid #C9F7F4;
+  border-right: 2px solid #C9F7F4;
+}
+.hud-bottom-left {
+  bottom: 6px;
+  left: 6px;
+  border-bottom: 2px solid #7887D9;
+  border-left: 2px solid #7887D9;
+}
+.hud-bottom-right {
+  bottom: 6px;
+  right: 6px;
+  border-bottom: 2px solid #FFBD86;
+  border-right: 2px solid #FFBD86;
+}
+
+/* HUD Header Details */
+.hud-term-code {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  color: #C9F7F4;
+  text-shadow: 0 0 8px rgba(201, 247, 244, 0.6);
+}
+
+.hud-title {
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.05em;
+  font-weight: 700 !important;
+}
+
+.hud-pulse-ring {
+  width: 7px;
+  height: 7px;
+  background: #34d399;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #34d399;
+}
+
+.futuristic-pill {
+  background: rgba(8, 11, 26, 0.8) !important;
+  border: 1px solid #C9F7F4 !important;
+  box-shadow: 0 0 15px rgba(201, 247, 244, 0.3);
+  font-family: 'Space Grotesk', monospace;
+  letter-spacing: 0.05em;
+}
+
+.hud-dot {
+  width: 6px;
+  height: 6px;
+  background: #FFBD86;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #FFBD86;
+}
+
+/* Scanning Laser Beam Effect */
+.futuristic-wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+.hud-scanner-beam {
+  position: absolute;
+  top: 0;
+  left: -20%;
+  width: 25%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(201, 247, 244, 0.12), rgba(201, 247, 244, 0.35), transparent);
+  pointer-events: none;
+  z-index: 5;
+  animation: hudLaserScan 4.5s ease-in-out infinite;
+}
+
+@keyframes hudLaserScan {
+  0% { left: -25%; opacity: 0; }
+  15% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { left: 110%; opacity: 0; }
+}
+
+/* Timeline & Telemetry */
+.hud-timeline {
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.08em;
+  border-top: 1px dashed rgba(201, 247, 244, 0.25) !important;
+}
+
+.hud-bottom-telemetry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.65rem;
+  color: #7887D9;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(120, 135, 217, 0.18);
+}
+
+.hud-bottom-telemetry strong {
+  color: #C9F7F4;
+}
+
+.telemetry-status {
+  color: #34d399;
+  font-weight: 700;
+  text-shadow: 0 0 8px rgba(52, 211, 153, 0.5);
+}
+
+@media (max-width: 600px) {
+  .hud-bottom-telemetry {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+/* ========================================================
+   MINIMAL SINGLE LINE GRAPH (TRANSPARENT BACKGROUND)
+   ======================================================== */
+
+.work-graph-box-minimal {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 10px 0 30px 0;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.work-svg-wrapper-minimal {
+  width: 100%;
+  height: 110px;
+  position: relative;
+  margin-top: 14px;
+}

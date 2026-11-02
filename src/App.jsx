@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowUpRight,
@@ -22,13 +21,80 @@ import {
   ChevronDown,
   MousePointer2,
   TrendingUp,
-  Workflow
+  Workflow,
+  CheckCircle2,
+  ShieldCheck,
+  Activity,
+  Volume2,
+  VolumeX,
+  Star,
+  Users
 } from "lucide-react";
 import "./App.css";
 
 const WHATSAPP = "917067492239";
 const whatsappMessage =
   "Hello Hashtag! I'm interested in your digital services. I'd like to discuss my project.";
+
+// Sound Effects Controller using Native Web Audio API
+class SoundFx {
+  constructor() {
+    this.ctx = null;
+    this.enabled = true;
+  }
+
+  init() {
+    if (!this.ctx && typeof window !== "undefined") {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        this.ctx = new AudioCtx();
+      }
+    }
+    if (this.ctx && this.ctx.state === "suspended") {
+      this.ctx.resume();
+    }
+  }
+
+  playHover() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(420, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(840, this.ctx.currentTime + 0.04);
+      gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.04);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.04);
+    } catch (e) {}
+  }
+
+  playClick() {
+    if (!this.enabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(580, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(260, this.ctx.currentTime + 0.08);
+      gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.08);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.08);
+    } catch (e) {}
+  }
+}
+
+const sfx = new SoundFx();
 
 const services = [
   {
@@ -132,7 +198,7 @@ const projects = [
 ];
 
 function BackgroundParticles() {
-  const particles = Array.from({ length: 42 }, (_, i) => ({
+  const particles = Array.from({ length: 36 }, (_, i) => ({
     id: i,
     left: `${(i * 37 + 11) % 100}%`,
     top: `${(i * 53 + 7) % 100}%`,
@@ -188,7 +254,7 @@ function SectionLabel({ number, children }) {
   );
 }
 
-function Navbar() {
+function Navbar({ soundMuted, toggleSound }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const links = [
     ["About", "#about"],
@@ -201,38 +267,75 @@ function Navbar() {
   return (
     <header className="site-header">
       <nav className="navbar container">
-        <a href="#home" className="brand-logo" aria-label="Hashtag home">
+        <a 
+          href="#home" 
+          className="brand-logo" 
+          aria-label="Hashtag home"
+          onMouseEnter={() => sfx.playHover()}
+          onClick={() => sfx.playClick()}
+        >
           <span className="brand-symbol">H<span>#</span></span>
           <span className="brand-name">HASHTAG<span>.</span></span>
         </a>
 
         <div className={`nav-links ${menuOpen ? "nav-open" : ""}`}>
           {links.map(([name, href]) => (
-            <a key={name} href={href} onClick={() => setMenuOpen(false)}>
+            <a 
+              key={name} 
+              href={href} 
+              onMouseEnter={() => sfx.playHover()}
+              onClick={() => {
+                sfx.playClick();
+                setMenuOpen(false);
+              }}
+            >
               {name}
             </a>
           ))}
           <a
             className="mobile-nav-cta"
             href="#contact"
-            onClick={() => setMenuOpen(false)}
+            onClick={() => {
+              sfx.playClick();
+              setMenuOpen(false);
+            }}
           >
             Let's Talk <ArrowUpRight size={16} />
           </a>
         </div>
 
-        <a className="nav-cta" href="#contact">
-          Let's Talk <ArrowUpRight size={17} />
-        </a>
+        <div className="nav-controls">
+          <button 
+            className="sound-toggle-btn" 
+            onClick={toggleSound}
+            aria-label="Toggle Sound Effects"
+            title={soundMuted ? "Unmute Sound Effects" : "Mute Sound Effects"}
+          >
+            {soundMuted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+            <span className="sound-toggle-tooltip">{soundMuted ? "Sound Off" : "Sound On"}</span>
+          </button>
 
-        <button
-          className="menu-toggle"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-label="Toggle navigation"
-          aria-expanded={menuOpen}
-        >
-          {menuOpen ? <X /> : <Menu />}
-        </button>
+          <a 
+            className="nav-cta" 
+            href="#contact"
+            onMouseEnter={() => sfx.playHover()}
+            onClick={() => sfx.playClick()}
+          >
+            Let's Talk <ArrowUpRight size={17} />
+          </a>
+
+          <button
+            className="menu-toggle"
+            onClick={() => {
+              sfx.playClick();
+              setMenuOpen(!menuOpen);
+            }}
+            aria-label="Toggle navigation"
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X /> : <Menu />}
+          </button>
+        </div>
       </nav>
     </header>
   );
@@ -273,8 +376,8 @@ function Hero() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.35 }}
           >
-            We combine creative thinking and modern technology to help
-            ambitious businesses build, connect and grow in the digital world.
+            We combine high-conversion design, modern web engineering, and
+            targeted marketing automation to help ambitious businesses scale faster.
           </motion.p>
 
           <motion.div
@@ -283,10 +386,20 @@ function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
           >
-            <a href="#contact" className="button button-primary">
+            <a 
+              href="#contact" 
+              className="button button-primary"
+              onMouseEnter={() => sfx.playHover()}
+              onClick={() => sfx.playClick()}
+            >
               Start a Project <ArrowUpRight size={18} />
             </a>
-            <a href="#work" className="button button-ghost">
+            <a 
+              href="#work" 
+              className="button button-ghost"
+              onMouseEnter={() => sfx.playHover()}
+              onClick={() => sfx.playClick()}
+            >
               Explore Our Work <ArrowRight size={17} />
             </a>
           </motion.div>
@@ -300,23 +413,29 @@ function Hero() {
             <div className="trust-avatars">
               <span>H</span><span>#</span><span>+</span>
             </div>
-            <p>Creative minds. Smart solutions. Real ambition.</p>
+            <div>
+              <p>Trusted by forward-thinking founders & creators.</p>
+              <small className="trust-subtext">Verified delivery • Dedicated engineering</small>
+            </div>
           </motion.div>
         </div>
 
         <motion.div
           className="hero-art"
-          initial={{ opacity: 0, scale: 0.82, rotate: -8 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ duration: 1.2, delay: 0.25, ease: "easeOut" }}
+          initial={{ opacity: 0, scale: 0.88 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1, delay: 0.25, ease: "easeOut" }}
         >
           <div className="hero-orbit orbit-one" />
           <div className="hero-orbit orbit-two" />
           <div className="hero-orbit orbit-three" />
 
-          <div className="hero-glass-card">
+          <div 
+            className="hero-glass-card"
+            onMouseEnter={() => sfx.playHover()}
+          >
             <div className="hero-card-top">
-              <span>HASHTAG / DIGITAL STUDIO</span>
+              <span>HASHTAG / STUDIO</span>
               <Sparkles size={18} />
             </div>
             <div className="hero-emblem">
@@ -324,21 +443,19 @@ function Hero() {
             </div>
             <div className="hero-card-bottom">
               <div>
-                <small>THINK DIFFERENT.</small>
-                <strong>CREATE IMPACT.</strong>
+                <small>DESIGN • AUTOMATE</small>
+                <strong>DOMINATE DIGITAL.</strong>
               </div>
               <span className="hero-card-arrow"><ArrowUpRight /></span>
             </div>
           </div>
 
           <div className="floating-chip chip-top">
-            <Zap size={16} /> Creative energy
+            <Zap size={16} /> Velocity Driven
           </div>
           <div className="floating-chip chip-bottom">
-            <Target size={16} /> Growth focused
+            <Target size={16} /> High ROI Strategy
           </div>
-          <div className="hero-plus plus-one">+</div>
-          <div className="hero-plus plus-two">✳</div>
         </motion.div>
       </div>
 
@@ -353,10 +470,11 @@ function Hero() {
 
 function Marquee() {
   const words = [
-    "CREATIVE THINKING",
-    "DIGITAL EXPERIENCES",
-    "SMART TECHNOLOGY",
-    "MEANINGFUL GROWTH",
+    "DATA-DRIVEN MARKETING",
+    "CUSTOM WEB ARCHITECTURE",
+    "AI SOLUTIONS & AUTOMATION",
+    "BRAND ACCELERATION",
+    "MOTION & 3D STORYTELLING",
   ];
 
   return (
@@ -397,24 +515,33 @@ function About() {
             we bring design, marketing and technology together to create
             experiences that move your business forward.
           </p>
-          <a className="text-link" href="#services">
+          <div className="live-status-pill">
+            <span className="pulse-dot-green" />
+            <span>Currently taking on projects for this quarter</span>
+          </div>
+          <a 
+            className="text-link" 
+            href="#services"
+            onMouseEnter={() => sfx.playHover()}
+            onClick={() => sfx.playClick()}
+          >
             Discover what we do <ArrowUpRight size={18} />
           </a>
         </Reveal>
       </div>
 
       <div className="container about-highlight">
-        <div className="highlight-card">
+        <div className="highlight-card" onMouseEnter={() => sfx.playHover()}>
           <span className="highlight-icon"><Globe2 /></span>
-          <div><strong>Think globally</strong><small>Ideas without boundaries</small></div>
+          <div><strong>Think globally</strong><small>Scalable systems without boundaries</small></div>
         </div>
-        <div className="highlight-card">
+        <div className="highlight-card" onMouseEnter={() => sfx.playHover()}>
           <span className="highlight-icon"><MousePointer2 /></span>
-          <div><strong>Design intentionally</strong><small>Every detail has a purpose</small></div>
+          <div><strong>Design intentionally</strong><small>Conversion-driven aesthetics</small></div>
         </div>
-        <div className="highlight-card">
+        <div className="highlight-card" onMouseEnter={() => sfx.playHover()}>
           <span className="highlight-icon"><TrendingUp /></span>
-          <div><strong>Build for growth</strong><small>Technology with direction</small></div>
+          <div><strong>Build for growth</strong><small>Technology geared toward revenue</small></div>
         </div>
       </div>
     </section>
@@ -436,7 +563,7 @@ function Services() {
           </div>
           <p className="section-side-copy">
             One creative partner. Multiple capabilities.
-            Connected by one goal — your growth.
+            Connected by one goal — your sustainable growth.
           </p>
         </Reveal>
 
@@ -445,7 +572,10 @@ function Services() {
             const Icon = service.icon;
             return (
               <Reveal key={service.number} delay={(index % 4) * 0.07}>
-                <article className={`service-card ${service.color}`}>
+                <article 
+                  className={`service-card ${service.color}`}
+                  onMouseEnter={() => sfx.playHover()}
+                >
                   <div className="service-card-top">
                     <span>{service.number} / 08</span>
                     <span className="service-icon"><Icon size={23} /></span>
@@ -455,7 +585,12 @@ function Services() {
                   <div className="service-tags">
                     {service.tags.map((tag) => <span key={tag}>{tag}</span>)}
                   </div>
-                  <a href="#contact" className="service-arrow" aria-label={`Enquire about ${service.title}`}>
+                  <a 
+                    href="#contact" 
+                    className="service-arrow" 
+                    aria-label={`Enquire about ${service.title}`}
+                    onClick={() => sfx.playClick()}
+                  >
                     <ArrowUpRight size={20} />
                   </a>
                 </article>
@@ -467,7 +602,9 @@ function Services() {
     </section>
   );
 }
-
+/* ========================================================
+   WORK / PORTFOLIO SECTION (CLEAN SINGLE LINE GRAPH)
+   ======================================================== */
 function Work() {
   return (
     <section className="work-section section-padding" id="work">
@@ -482,15 +619,91 @@ function Work() {
             </h2>
           </div>
           <p className="section-side-copy">
-            A glimpse into the kind of digital experiences
-            we aim to create.
+            A glimpse into the digital experiences, measurable scaling, and strategic
+            architectures we develop.
           </p>
         </Reveal>
 
+        {/* --- MINIMAL SINGLE-LINE GRAPH (NO BACKGROUND & NO REVIEWS) --- */}
+        <Reveal delay={0.1}>
+          <div className="work-graph-box-minimal" onMouseEnter={() => sfx.playHover()}>
+            <div className="work-graph-header">
+              <div className="graph-live-indicator">
+                <span className="hud-pulse-ring" />
+                <span className="hud-term-code">REALTIME GROWTH TRAJECTORY</span>
+              </div>
+              <div className="graph-gain-pill futuristic-pill">
+                <TrendingUp size={15} />
+                <span>+284% GROWTH</span>
+              </div>
+            </div>
+
+            {/* Minimal SVG Canvas with Single Glowing Line */}
+            <div className="work-svg-wrapper-minimal">
+              <svg viewBox="0 0 800 130" className="work-svg-chart" preserveAspectRatio="none">
+                <defs>
+                  <filter id="singleNeonGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="4" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+
+                  <linearGradient id="singleLineGrad" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stopColor="#7887D9" />
+                    <stop offset="60%" stopColor="#C9F7F4" />
+                    <stop offset="100%" stopColor="#FFBD86" />
+                  </linearGradient>
+                </defs>
+
+                {/* Single Animated Neon Curve */}
+                <motion.path
+                  d="M 10 115 Q 160 85, 260 95 T 460 55 T 640 40 T 790 15"
+                  fill="none"
+                  stroke="url(#singleLineGrad)"
+                  strokeWidth="3.5"
+                  strokeLinecap="round"
+                  filter="url(#singleNeonGlow)"
+                  initial={{ pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.8, ease: "easeInOut" }}
+                />
+
+                {/* End Pulsing Neon Node */}
+                <motion.circle
+                  cx="790"
+                  cy="15"
+                  r="6"
+                  fill="#FFBD86"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: [1, 1.4, 1] }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 1.8 }}
+                />
+              </svg>
+
+              {/* Minimal Timeline */}
+              <div className="work-graph-timeline hud-timeline">
+                <span>Start</span>
+                <span>Strategy</span>
+                <span>Execution</span>
+                <span className="peak-tag">Peak Performance</span>
+              </div>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* Projects Grid */}
         <div className="projects-grid">
           {projects.map((project, index) => (
             <Reveal key={project.number} delay={index * 0.12}>
-              <article className="project-card">
+              <article 
+                className="project-card"
+                onMouseEnter={() => sfx.playHover()}
+                onClick={() => sfx.playClick()}
+              >
                 <div className={`project-visual visual-${project.visual}`}>
                   {project.visual === "store" && (
                     <div className="mock-store">
@@ -531,13 +744,12 @@ function Work() {
           ))}
         </div>
         <p className="portfolio-note">
-          These are illustrative design concepts, not client projects or completed case studies.
+          These are illustrative design directions, not client projects or completed case studies.
         </p>
       </div>
     </section>
   );
 }
-
 function Process() {
   return (
     <section className="process-section section-padding" id="process">
@@ -554,7 +766,10 @@ function Process() {
         <div className="process-grid">
           {process.map(([number, title, description], index) => (
             <Reveal key={number} delay={index * 0.1}>
-              <div className="process-item">
+              <div 
+                className="process-item"
+                onMouseEnter={() => sfx.playHover()}
+              >
                 <div className="process-number">{number}</div>
                 <div className="process-line" />
                 <h3>{title}</h3>
@@ -581,8 +796,13 @@ function CTA() {
             <br />
             something <span>matter.</span>
           </h2>
-          <p>Your next big move starts with a conversation.</p>
-          <a href="#contact" className="button button-light">
+          <p>Your next big move starts with a single conversation.</p>
+          <a 
+            href="#contact" 
+            className="button button-light"
+            onMouseEnter={() => sfx.playHover()}
+            onClick={() => sfx.playClick()}
+          >
             Let's Build Together <ArrowUpRight size={18} />
           </a>
         </Reveal>
@@ -605,6 +825,7 @@ function Contact() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    sfx.playClick();
 
     const message = [
       "Hello Hashtag! I would like to discuss a project.",
@@ -634,14 +855,20 @@ function Contact() {
           </h2>
           <p className="contact-description">
             Tell us a little about your idea. Let's explore how we can
-            bring it to life.
+            bring it to life with precision.
           </p>
 
           <div className="contact-direct">
             <span className="contact-direct-icon"><MessageCircle /></span>
             <div>
-              <small>QUICK CONVERSATION</small>
-              <a href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(whatsappMessage)}`} target="_blank" rel="noreferrer">
+              <small>DIRECT INQUIRY</small>
+              <a 
+                href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(whatsappMessage)}`} 
+                target="_blank" 
+                rel="noreferrer"
+                onMouseEnter={() => sfx.playHover()}
+                onClick={() => sfx.playClick()}
+              >
                 Chat with us on WhatsApp <ArrowUpRight size={16} />
               </a>
             </div>
@@ -704,7 +931,11 @@ function Contact() {
               />
             </label>
 
-            <button className="button button-primary form-submit" type="submit">
+            <button 
+              className="button button-primary form-submit" 
+              type="submit"
+              onMouseEnter={() => sfx.playHover()}
+            >
               Send Enquiry <Send size={17} />
             </button>
             <small className="form-note">
@@ -723,7 +954,12 @@ function Footer() {
       <div className="container">
         <div className="footer-top">
           <div className="footer-brand">
-            <a href="#home" className="brand-logo">
+            <a 
+              href="#home" 
+              className="brand-logo"
+              onMouseEnter={() => sfx.playHover()}
+              onClick={() => sfx.playClick()}
+            >
               <span className="brand-symbol">H<span>#</span></span>
               <span className="brand-name">HASHTAG<span>.</span></span>
             </a>
@@ -736,16 +972,16 @@ function Footer() {
           <div className="footer-links">
             <div>
               <span>EXPLORE</span>
-              <a href="#about">About us</a>
-              <a href="#services">Services</a>
-              <a href="#work">Our work</a>
-              <a href="#process">Our process</a>
+              <a href="#about" onMouseEnter={() => sfx.playHover()}>About us</a>
+              <a href="#services" onMouseEnter={() => sfx.playHover()}>Services</a>
+              <a href="#work" onMouseEnter={() => sfx.playHover()}>Our work</a>
+              <a href="#process" onMouseEnter={() => sfx.playHover()}>Our process</a>
             </div>
             <div>
               <span>GET IN TOUCH</span>
-              <a href="#contact">Start a project</a>
-              <a href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer">WhatsApp</a>
-              <a href="mailto:hello@hashtag.in">Email us</a>
+              <a href="#contact" onMouseEnter={() => sfx.playHover()}>Start a project</a>
+              <a href={`https://wa.me/${WHATSAPP}`} target="_blank" rel="noreferrer" onMouseEnter={() => sfx.playHover()}>WhatsApp</a>
+              <a href="mailto:hello@hashtag.in" onMouseEnter={() => sfx.playHover()}>Email us</a>
             </div>
           </div>
         </div>
@@ -753,7 +989,7 @@ function Footer() {
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} HASHTAG. All rights reserved.</span>
           <span>MADE WITH INTENTION <span className="footer-heart">✳</span></span>
-          <a href="#home">BACK TO TOP ↑</a>
+          <a href="#home" onMouseEnter={() => sfx.playHover()}>BACK TO TOP ↑</a>
         </div>
       </div>
     </footer>
@@ -768,6 +1004,8 @@ function WhatsAppButton() {
       target="_blank"
       rel="noreferrer"
       aria-label="Chat with HASHTAG on WhatsApp"
+      onMouseEnter={() => sfx.playHover()}
+      onClick={() => sfx.playClick()}
     >
       <MessageCircle size={23} />
       <span>Let's talk</span>
@@ -776,10 +1014,18 @@ function WhatsAppButton() {
 }
 
 export default function App() {
+  const [soundMuted, setSoundMuted] = useState(false);
+
+  const toggleSound = () => {
+    sfx.enabled = !sfx.enabled;
+    setSoundMuted(!sfx.enabled);
+    if (sfx.enabled) sfx.playClick();
+  };
+
   return (
     <>
       <BackgroundParticles />
-      <Navbar />
+      <Navbar soundMuted={soundMuted} toggleSound={toggleSound} />
       <main>
         <Hero />
         <Marquee />
