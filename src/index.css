@@ -1,0 +1,15 @@
+
+@import "./App.css";
+
+#root {
+  min-height: 100vh;
+  isolation: isolate;
+}
+
+img, svg {
+  max-width: 100%;
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
